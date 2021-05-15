@@ -6,12 +6,15 @@ import java.net.Socket;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 public class CustomHttpServer implements Runnable {
 
     private static final Logger LOG = Logger.getLogger(CustomHttpServer.class.getName());
+
+    public static final Hashtable<String, String> MIME_TYPES = new Hashtable<>();
 
     private static final File WEB_ROOT = new File(".");
     private static final File INDEX_HTML = new File(WEB_ROOT, "Ressources_exte/index.html");
@@ -86,6 +89,19 @@ public class CustomHttpServer implements Runnable {
         }
         return res;
     }
+
+    public static void build_mime_types(){
+        MIME_TYPES.put(".gif", "images/gif");
+        MIME_TYPES.put(".jpg", "images/jpeg");
+        MIME_TYPES.put(".jpeg", "images/jpeg");
+        MIME_TYPES.put(".png", "images/png");
+        MIME_TYPES.put(".html", "text/html");
+        MIME_TYPES.put(".htm", "text/html");
+        MIME_TYPES.put(".txt", "text/plain");
+        MIME_TYPES.put(".css", "text/css");
+        MIME_TYPES.put(".js", "text/javascript");
+    }
+
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(8080)) {
