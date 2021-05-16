@@ -2,4 +2,8 @@
 target/*
 .settings/*
 projetreseau.iml
+<<<<<<< HEAD
+=======
+Ressources_exte/conf.properties
+>>>>>>> branch 'master' of https://github.com/VincentC7/M1_Projet_R-seau.git
 /target/
