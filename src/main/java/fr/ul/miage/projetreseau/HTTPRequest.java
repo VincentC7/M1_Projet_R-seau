@@ -62,13 +62,13 @@ public class HTTPRequest extends Thread {
     }
 
     /**
-     * Méthode volumineuse qui s'occupe de gérer la requette
+     * Méthode volumineuse qui s'occupe de gérer la requete
      */
     public void run() {
         InputStream reader = null;
         try {
             socket.setSoTimeout(30000);
-            //Buffer permettant de lire les données envoyés par le navigateur
+            //Buffer permettant de lire les données envoyées par le navigateur
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             //Buffer permettant d'écrire les données pour ensuite les envoyer au navigateur
             BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
@@ -84,14 +84,21 @@ public class HTTPRequest extends Thread {
             }
 
             String path = request.substring(4, request.length() - 9);
-
             File file = new File(root, URLDecoder.decode(path, "UTF-8")).getCanonicalFile();
-
+            File psswdFile = new File(file, ".psswd");
+            
+            //Renvoie vers une
+            if (psswdFile.isFile()) {
+            	
+            	sendError(out, 403, "Permission Denied.");
+			}
+            
             if (file.isDirectory()) {
                 //Récupération du fichier index.html
                 File indexFile = new File(file, "index.html");
                 if (indexFile.exists() && !indexFile.isDirectory()) file = indexFile;
             }
+
 
             if (!file.toString().startsWith(root.toString())) {
                 //Là on pourrait afficher les fichiers du serveur (option du projet)
