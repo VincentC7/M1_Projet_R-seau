@@ -1,5 +1,7 @@
 package fr.ul.miage.projetreseau;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -21,11 +23,11 @@ public class ConnexionInterface {
 	JTextField password = new JTextField();
 	JLabel loginLabel = new JLabel("login :");
 	JLabel passwordLabel = new JLabel("password :");
-	JButton validation = new JButton();
+	JButton validation = new JButton("Valider");
 	validation.addActionListener(new ActionListener() {
-
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+	    	
 		try {
 		    // Créer l'objet File Reader
 		    FileReader fr;
@@ -38,10 +40,12 @@ public class ConnexionInterface {
 			if (line.split(":")[0].equals(login.getText())
 				&& line.split(":")[1].equals(password.getText())) {
 			    enable = true;
-			    fenetre.dispose();
 			}
 		    }
 		    br.close();
+		    fenetre.setVisible(false);
+		    fenetre.dispose(); //Quitte
+		    
 		}
 		catch (IOException e1) {
 		    // TODO Auto-generated catch block
@@ -49,18 +53,24 @@ public class ConnexionInterface {
 		}
 	    }
 	});
-	fenetre.add(login);
-	fenetre.add(password);
+	login.setPreferredSize(new Dimension(100, 40));
+	password.setPreferredSize(new Dimension(100, 40));
+	//fenetre.setSize(500, 500);
+	
+	fenetre.setLayout(new FlowLayout());
 	fenetre.add(loginLabel);
+	fenetre.add(login);
 	fenetre.add(passwordLabel);
+	fenetre.add(password);
 	fenetre.add(validation);
 	fenetre.pack();
 	fenetre.setVisible(true);
+	fenetre.setFocusable(true);
 	return fenetre;
     }
 
     public boolean isEnable() {
-	return enable;
+    	return enable;
     }
 
 }
