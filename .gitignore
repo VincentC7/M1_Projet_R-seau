@@ -3,3 +3,4 @@ target/*
 .settings/*
 projetreseau.iml
 Ressources_exte/conf.properties
+/target/
