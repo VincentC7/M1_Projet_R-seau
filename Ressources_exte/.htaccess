@@ -1,0 +1,4 @@
+AuthName "Accès restreint : veuillez vous authentifier"
+AuthType Basic
+AuthUserFile /.htpasswd
+require valid-user
