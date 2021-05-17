@@ -11,7 +11,6 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.URLDecoder;
 import java.util.Date;
-import javax.swing.JFrame;
 
 public class HTTPRequest extends Thread {
 
@@ -50,10 +49,11 @@ public class HTTPRequest extends Thread {
 	 * @throws IOException cas ou les données ne peuvent pas être écrite dans le
 	 *                     buffer
 	 */
-	private void sendHeader(BufferedOutputStream out, int code, String contentType, long contentLength,
+	private static void sendHeader(BufferedOutputStream out, int code, String contentType, long contentLength,
 			long lastModified) throws IOException {
-		//System.out.println("Send    to   " + domaine + " [" + new Date() + "]" + " HTTP/1.0 GET, code :" + code + ", "
-				//+ contentType + ", contentLength:" + contentLength);
+		// System.out.println("Send to " + domaine + " [" + new Date() + "]" + "
+		// HTTP/1.0 GET, code :" + code + ", "
+		// + contentType + ", contentLength:" + contentLength);
 		String head = "HTTP/1.0 " + code + " OK\r\n" + "Date: " + new Date() + "\r\n" + "Content-Type: " + contentType
 				+ "\r\n" + ((contentLength != -1) ? "Content-Length: " + contentLength + "\r\n" : "")
 				+ "Last-modified: " + new Date(lastModified) + "\r\n" + "\r\n";
@@ -69,7 +69,7 @@ public class HTTPRequest extends Thread {
 	 * @param message => message d'erreur
 	 * @throws IOException cas ou le message n'a pas pu etre écrit
 	 */
-	private void sendError(BufferedOutputStream out, int code, String message) throws IOException {
+	static void sendError(BufferedOutputStream out, int code, String message) throws IOException {
 		sendHeader(out, code, "text/html", message.length(), System.currentTimeMillis());
 		out.write(message.getBytes());
 		out.flush();
@@ -90,9 +90,10 @@ public class HTTPRequest extends Thread {
 
 			// Recupération de la requete
 			String request = in.readLine();
-			//System.out.println("Request from " + domaine + " [" + new Date() + "] " + request);
+			// System.out.println("Request from " + domaine + " [" + new Date() + "] " +
+			// request);
 
-			// Vérifiacation de l'entête de la requete (si c'est pas un GET, ça dégage)
+			// Vérification de l'entête de la requete (si c'est pas un GET, ça dégage)
 			if (request == null || !request.startsWith("GET ")
 					|| !(request.endsWith(" HTTP/1.0") || request.endsWith("HTTP/1.1"))) {
 				sendError(out, 500, "Invalid Method.");
@@ -101,23 +102,6 @@ public class HTTPRequest extends Thread {
 
 			String path = request.substring(4, request.length() - 9);
 			File file = new File(root, URLDecoder.decode(path, "UTF-8")).getCanonicalFile();
-			
-			// Test si la ressource est protegee
-			File htpsswdFile = new File(root, ".htpasswd");
-			if (htpsswdFile.isFile()) {
-				
-				// Ouvre une fenetre de connexion
-				ConnexionInterface connexion = new ConnexionInterface();
-				JFrame connexionInterface = connexion.connexion(htpsswdFile);
-				// Attend la reponse de l'utilisateur
-				while (connexionInterface.isVisible()) {
-				}
-				// Récupere la réponse de l'utilisateur et refuse la connexion
-				// si le login ou le mdp ne sont pas bons
-				if (!connexion.isEnable()) {
-					sendError(out, 403, "Permission Denied.");
-				}
-			}
 
 			if (file.isDirectory()) {
 				// Récupération du fichier index.html
