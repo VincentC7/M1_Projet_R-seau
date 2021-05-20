@@ -108,19 +108,30 @@ public class HTTPRequest extends Thread {
 		out.close();
 	}
 
-	public boolean repertoireProtege() throws IOException {
+	/**
+	 * Teste si le répertoire est protégé
+	 * 
+	 * @throws IOException cas ou le fichier n'existe pas
+	 * @return true si le repertoire contient un fichier htpsswd, false sinon
+	 */
+	public boolean repertoireProtege() {
 
-		// Teste si la ressource est protegee
-		File htpsswdFile = new File(root, ".htpasswd");
-		if (htpsswdFile.isFile()) {
-			return true;
+		try {
+			// Teste si la ressource est protegee
+			File htpsswdFile = new File(root, ".htpasswd");
+			if (htpsswdFile.isFile()) {
+				return true;
+			}
+		} catch (Exception e) {
+			// Si le fichier n'existe pas
+			e.printStackTrace();
 		}
 		return false;
 
 	}
 
 	/**
-	 * Méthode volumineuse qui s'occupe de gérer la requette
+	 * Méthode volumineuse qui s'occupe de gérer une requete
 	 */
 	public void run() {
 		InputStream reader = null;

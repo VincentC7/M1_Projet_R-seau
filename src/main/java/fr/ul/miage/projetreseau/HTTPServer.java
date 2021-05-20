@@ -11,8 +11,8 @@ public class HTTPServer extends Thread {
 
 	// Répertoire racine du projet
 	private final File root;
-	// Object effectant le lien avec notre serveur java et le navigateur, il attend
-	// les requetes et envois les infos au navigateur quand il faut
+	// Objet effectuant le lien entre notre serveur (java) et le navigateur, il attend
+	// les requetes et envoie les infos au navigateur quand il faut
 	private final ServerSocket serverSocket;
 
 	// Nom du serveur
@@ -63,14 +63,13 @@ public class HTTPServer extends Thread {
 	public void run() {
 		while (true) {
 			try {
+				// Ecoute une connexion à etablir avec ce socket et s'il y en a une, l'accepte
 				Socket socket = serverSocket.accept();
 
-				// Envoi d'une requête serveur vers navigateur (client)
-				HTTPRequest requestThread = new HTTPRequest(socket, root, serverSocket.getInetAddress().getHostName());
+				// Lecture d'une requête envoyée par le navigateur (client) au serveur, analyse
+				// et réponse : envoi d'une requête serveur vers navigateur (client)
+				HTTPRequest requestThread = new HTTPRequest(socket, root);
 				requestThread.start();
-
-				// Lecture d'une requête envoyée par le navigateur (client) au serveur
-				// Commence par GET ...
 
 			} catch (IOException e) {
 				System.exit(1);
@@ -115,11 +114,4 @@ public class HTTPServer extends Thread {
 		return extension.toLowerCase();
 	}
 
-	/*
-	 * public static void main(String[] args) { try { new HTTPServer(new
-	 * File("Ressources_exte/site1"), 8090, "www.licorne.choquert"); new
-	 * HTTPServer(new File("Ressources_exte/site2"), 8091,
-	 * "www.testserv1.choquert"); } catch (IOException e) { System.out.println(e); }
-	 * }
-	 */
 }
