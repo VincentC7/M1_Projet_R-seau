@@ -17,14 +17,17 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		/*
-		 * // Site 2 String serv2_domain =
-		 * GeneralProperties.getPropertie("SERVERS[1].domain"); String serv2_root =
-		 * GeneralProperties.getPropertie("SERVERS[1].root"); String serv2_port =
-		 * GeneralProperties.getPropertie("SERVERS[1].port"); try { new HTTPServer(new
-		 * File(serv2_root), Integer.parseInt(serv2_port), serv2_domain); } catch
-		 * (IOException e) { e.printStackTrace(); }
-		 */
+
+		// Site 2
+		String serv2_domain = GeneralProperties.getPropertie("SERVERS[1].domain");
+		String serv2_root = GeneralProperties.getPropertie("SERVERS[1].root");
+		String serv2_port = GeneralProperties.getPropertie("SERVERS[1].port");
+		try {
+			new HTTPServer(new File(serv2_root), Integer.parseInt(serv2_port), serv2_domain);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

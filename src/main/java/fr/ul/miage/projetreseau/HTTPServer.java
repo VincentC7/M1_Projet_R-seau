@@ -1,14 +1,11 @@
 package fr.ul.miage.projetreseau;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Hashtable;
-
-import javax.swing.JFrame;
 
 public class HTTPServer extends Thread {
 
@@ -35,6 +32,11 @@ public class HTTPServer extends Thread {
 		MIME_TYPES.put(".txt", "text/plain");
 		MIME_TYPES.put(".css", "text/css");
 		MIME_TYPES.put(".js", "text/javascript");
+		MIME_TYPES.put(".woff", "font/woff");
+		MIME_TYPES.put(".woff2", "font/woff2");
+		MIME_TYPES.put(".ttf", "font/ttf");
+		MIME_TYPES.put(".ttf2", "font/ttf2");
+		MIME_TYPES.put(".ico", "image/x-icon");
 	}
 
 	/**
@@ -62,17 +64,13 @@ public class HTTPServer extends Thread {
 		while (true) {
 			try {
 				Socket socket = serverSocket.accept();
-				// Buffer permettant d'écrire les données pour ensuite les envoyer au navigateur
-				BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
 
-				// Si l'utilisateur et le mdp sont corrects
-				if (accesPage(out)) {
-					// On accède à la page
-					System.out.println("OK");
-				}
-
+				// Envoi d'une requête serveur vers navigateur (client)
 				HTTPRequest requestThread = new HTTPRequest(socket, root, serverSocket.getInetAddress().getHostName());
 				requestThread.start();
+
+				// Lecture d'une requête envoyée par le navigateur (client) au serveur
+				// Commence par GET ...
 
 			} catch (IOException e) {
 				System.exit(1);
@@ -80,29 +78,21 @@ public class HTTPServer extends Thread {
 		}
 	}
 
-	public boolean accesPage(BufferedOutputStream out) throws IOException {
+	/**
+	 * Fonction qui vérifie si un fichier est compressé via son nom
+	 * 
+	 * @param file fichier où on souhaite savoir s'il ets compressé
+	 * @return true s'il est compressé, false sinon
+	 */
+	public static boolean estCompresse(java.io.File file) {
 
-		// Teste si la ressource est protegee
-		File htpsswdFile = new File(root, ".htpasswd");
-		if (htpsswdFile.isFile()) {
+		String filename = file.getName();
 
-			// Ouvre une fenetre de connexion
-			System.out.println("ouverture fenêtre : " + out.toString());
-			ConnexionInterface connexion = new ConnexionInterface();
-			JFrame connexionInterface = connexion.connexion(htpsswdFile);
-			// Attend la reponse de l'utilisateur
-			while (connexionInterface.isVisible()) {
-				// tant que l'utilisateur n'a pas validé
+		String[] filenameParts = filename.split(".");
+		for (int i = 0; i < filenameParts.length; i++) {
+			if (filenameParts[i].equals("min")) {
+				return true;
 			}
-			System.out.println("Réponse validée");
-			// Récupere la réponse de l'utilisateur et refuse la connexion
-			// si le login ou le mdp ne sont pas bons
-			if (!connexion.isEnable()) {
-				System.out.println("Permission Denied : " + connexion.isEnable());
-				HTTPRequest.sendError(out, 403, "Permission Denied.");
-				return false;
-			}
-			return true;
 		}
 		return false;
 
