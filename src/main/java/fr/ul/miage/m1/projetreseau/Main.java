@@ -1,9 +1,9 @@
-package fr.ul.miage.projetreseau;
+package fr.ul.miage.m1.projetreseau;
 
 import java.io.File;
 import java.io.IOException;
 
-import fr.ul.miage.projetreseau.service.GeneralProperties;
+import fr.ul.miage.m1.projetreseau.service.GeneralProperties;
 
 public class Main {
 

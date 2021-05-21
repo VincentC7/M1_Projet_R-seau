@@ -1,4 +1,4 @@
-package fr.ul.miage.projetreseau.service;
+package fr.ul.miage.m1.projetreseau.service;
 
 import java.io.FileInputStream;
 import java.io.IOException;

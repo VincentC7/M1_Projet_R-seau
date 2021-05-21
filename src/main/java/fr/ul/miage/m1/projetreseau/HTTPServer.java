@@ -1,4 +1,4 @@
-package fr.ul.miage.projetreseau;
+package fr.ul.miage.m1.projetreseau;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class HTTPServer extends Thread {
 
 				// Lecture d'une requête envoyée par le navigateur (client) au serveur, analyse
 				// et réponse : envoi d'une requête serveur vers navigateur (client)
-				HTTPRequest requestThread = new HTTPRequest(socket, root);
+				HTTPRequest requestThread = new HTTPRequest(socket, root,serverSocket.getInetAddress().getHostName());
 				requestThread.start();
 
 			} catch (IOException e) {

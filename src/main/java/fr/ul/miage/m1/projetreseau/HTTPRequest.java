@@ -1,4 +1,4 @@
-package fr.ul.miage.projetreseau;
+package fr.ul.miage.m1.projetreseau;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,6 +23,8 @@ public class HTTPRequest extends Thread {
 	// Object communiquant avec le serversocket afin d'envoyer/recevoir les infos du
 	// navigateur
 	private final Socket socket;
+	//Nom de domaine du site : "www.exemple.fr"
+    private final String domaine;
 
 	/**
 	 * Constructeur
@@ -31,9 +33,10 @@ public class HTTPRequest extends Thread {
 	 *                navigateur (client)
 	 * @param rootDir repertoire racine du projet
 	 */
-	public HTTPRequest(Socket socket, File rootDir) {
+	public HTTPRequest(Socket socket, File rootDir, String domaine) {
 		this.socket = socket;
 		root = rootDir;
+		this.domaine = domaine;
 	}
 
 	/**
@@ -50,7 +53,8 @@ public class HTTPRequest extends Thread {
 	 *                     buffer
 	 */
 	private static void sendHeader(BufferedOutputStream out, int code, String contentType, long contentLength,
-			long lastModified, File file) throws IOException {
+			long lastModified, File file, String domaine) throws IOException {
+        System.out.println("Send    to   "+domaine+" ["+new Date()+"]"+" HTTP/1.0 GET, code :"+code+", "+contentType+", contentLength:"+contentLength);
 		String head = null;
 		switch (code) {
 		case 200:
@@ -102,7 +106,7 @@ public class HTTPRequest extends Thread {
 	 * @throws IOException cas ou le message n'a pas pu etre écrit
 	 */
 	private void sendError(BufferedOutputStream out, int code, String message) throws IOException {
-		sendHeader(out, code, "text/html", message.length(), System.currentTimeMillis(), null);
+		sendHeader(out, code, "text/html", message.length(), System.currentTimeMillis(), null, domaine);
 		out.write(message.getBytes());
 		out.flush();
 		out.close();
@@ -145,6 +149,7 @@ public class HTTPRequest extends Thread {
 
 			// Recupération de la première ligne de la requete
 			String request = in.readLine();
+            System.out.println("Request from "+domaine+" ["+new Date()+"] "+request);
 
 			// Vérification de l'entête de la requete (si c'est pas un GET, ça dégage)
 			if (request == null || !request.startsWith("GET ")
@@ -238,7 +243,7 @@ public class HTTPRequest extends Thread {
 						sendError(out, 415, "Unsupported Media Type");
 					}
 
-					sendHeader(out, 200, contentType, file.length(), file.lastModified(), file);
+					sendHeader(out, 200, contentType, file.length(), file.lastModified(), file, domaine);
 
 					byte[] buffer = new byte[4096];
 					int bytesRead;
